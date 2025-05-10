@@ -13,7 +13,7 @@ const PORT = 8009;
 // 中间件
 app.use(express.json());
 app.use(cors({
-  origin: ['http://frontend:8010','http://localhost:8010', 'http://8.147.108.7:8010', 'http://0.0.0.0:8010'],
+  origin: ['http://frontend:8010','http://localhost:8010', 'http://0.0.0.0:8010'],
   credentials: true
 }));
 
