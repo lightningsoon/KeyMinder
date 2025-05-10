@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8009';
 
-
+console.log(`API configured with URL: ${API_URL} (${isDev ? 'development' : 'production'} mode)`);
 const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,

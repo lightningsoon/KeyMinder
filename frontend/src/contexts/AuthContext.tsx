@@ -19,27 +19,44 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8009';
-
+console.log('Using API URL:', API_URL);
 // 创建一个独立的 axios 实例，而不是修改全局默认值
 const createAuthAPI = (token: string | null): AxiosInstance => {
   const api = axios.create({
     baseURL: API_URL,
     timeout: 10000, // 10秒超时
-    headers: token ? { Authorization: `Bearer ${token}` } : {}
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    withCredentials: true,  // 确保跨域请求发送凭证
   });
-  
+   console.log('API instance created:', api);
+  console.log('API methods available:', Object.keys(api));
   // 添加响应拦截器处理常见错误
-  api.interceptors.response.use(
-    response => response,
+  api.interceptors.request.use(
+    config => {
+      console.log('发送请求:', config.method, config.url, config);
+      return config;
+    },
     error => {
-      // 处理网络错误
-      if (!error.response) {
-        console.error('网络错误:', error.message);
+      console.error('请求错误:', error);
+      return Promise.reject(error);
+    }
+  );
+  api.interceptors.response.use(
+    response => {
+      console.log('收到响应:', response.status, response.config.url);
+      return response;
+    },
+    error => {
+      if (error.response) {
+        console.error('响应错误:', error.response.status, error.response.data);
+      } else if (error.request) {
+        console.error('请求错误 (无响应):', error.request);
+      } else {
+        console.error('设置请求时出错:', error.message);
       }
       return Promise.reject(error);
     }
   );
-  
   return api;
 };
 
@@ -47,36 +64,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const [isLoading, setIsLoading] = useState(true);
-  const [api, setApi] = useState(() => createAuthAPI(token));
-  const cancelTokenRef = useRef<CancelTokenSource | null>(null);
-
-  // 当 token 变化时，更新 API 实例
+  const apiRef = useRef<AxiosInstance | null>(null);
+// 初始化 API 实例
   useEffect(() => {
-    setApi(createAuthAPI(token));
+    try {
+      console.log('Creating API instance with token:', token ? '(token exists)' : 'null');
+      apiRef.current = createAuthAPI(token);
+      console.log('API instance created successfully');
+    } catch (error) {
+      console.error('Failed to create API instance:', error);
+    }
   }, [token]);
 
-  // 在组件挂载时检查用户是否已登录
+  // 检查用户认证状态
   useEffect(() => {
+    if (!token || !apiRef.current) {
+      setIsLoading(false);
+      return;
+    }
+    
     const checkAuthStatus = async () => {
-      if (!token) {
-        setIsLoading(false);
-        return;
-      }
-      
       // 创建取消令牌
-      cancelTokenRef.current = axios.CancelToken.source();
+      const cancelToken = axios.CancelToken.source();
       
       try {
-        const response = await api.get('/api/auth/me', {
-          cancelToken: cancelTokenRef.current.token
+        console.log('Checking auth status...');
+        const response = await apiRef.current.get('/api/auth/me', {
+          cancelToken: cancelToken.token
         });
+        console.log('Auth status response:', response.data);
         setUser(response.data.user);
       } catch (error) {
         if (axios.isCancel(error)) {
-          console.log('请求已取消:', error.message);
+          console.log('Request cancelled:', error.message);
         } else {
-          console.error('认证错误:', error);
-          // 只有在非取消错误的情况下才清除认证状态
+          console.error('Authentication error:', error);
           localStorage.removeItem('token');
           setToken(null);
           setUser(null);
@@ -88,20 +110,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     checkAuthStatus();
     
-    // 清理函数 - 取消未完成的请求
     return () => {
-      if (cancelTokenRef.current) {
-        cancelTokenRef.current.cancel('组件卸载，取消请求');
-        cancelTokenRef.current = null;
-      }
+      // 清理逻辑
     };
-  }, [token, api]);
+  }, [token]);
+
 
   // 登录函数
   const login = async (email: string, password: string) => {
     try {
-      const response = await api.post('/api/auth/login', { email, password });
-      const { token: newToken, user: userData } = response.data;
+      if (!apiRef.current) {
+        apiRef.current = createAuthAPI(token);
+      }
+    const response = await apiRef.current.post('/api/auth/login', { email, password });
+    const { token: newToken, user: userData } = response.data;
       
       localStorage.setItem('token', newToken);
       setToken(newToken);
@@ -137,7 +159,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // 注册函数
   const register = async (email: string, username: string, password: string) => {
     try {
-      const response = await api.post('/api/auth/register', { email, username, password });
+      if (!apiRef.current) {
+        apiRef.current = createAuthAPI(token);
+      }
+      const response = await apiRef.current.post('/api/auth/register', { email, username, password });
       const { token: newToken, user: userData } = response.data;
       
       localStorage.setItem('token', newToken);

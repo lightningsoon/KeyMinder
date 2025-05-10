@@ -12,6 +12,7 @@ services:
     volumes:
       - ./backend:/app
       - ./data:/data
+      - /app/node_modules
     networks:
       - app-network
 

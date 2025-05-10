@@ -51,8 +51,8 @@ import {
 const dummyPasswords = [
   { id: 1, website: '示例-微信', url: 'https://wx.qq.com', username: 'user123', password: 'P@ssw0rd123', category: '社交媒体', lastUpdated: '2023-12-15' },
   { id: 2, website: '示例-淘宝', url: 'https://www.alipay.com', username: '188666688888', password: 'Secure!2025', category: '购物', lastUpdated: '2024-01-20' },
-  { id: 2, website: '示例-抖音', url: 'https://www.douyin.com', username: 'xxx1386666666', password: 'mima!2025', category: '娱乐', lastUpdated: '2024-01-20' },
-  { id: 3, website: '示例—银行', url: 'https://www.icbc.com.cn', username: '6222********1234', password: 'Bank@2025!', category: '金融', lastUpdated: '2024-02-05' }
+  { id: 3, website: '示例-抖音', url: 'https://www.douyin.com', username: 'xxx1386666666', password: 'mima!2025', category: '娱乐', lastUpdated: '2024-01-20' },
+  { id: 4, website: '示例—银行', url: 'https://www.icbc.com.cn', username: '6222********1234', password: 'Bank@2025!', category: '金融', lastUpdated: '2024-02-05' }
 ];
 
 // 密码安全性检查

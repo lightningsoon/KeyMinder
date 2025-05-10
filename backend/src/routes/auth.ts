@@ -5,6 +5,9 @@ import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
 const prisma = new PrismaClient();
+prisma.$connect()
+  .then(() => console.log('成功连接到数据库'))
+  .catch(e => console.error('数据库连接失败:', e));
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 // 注册新用户
