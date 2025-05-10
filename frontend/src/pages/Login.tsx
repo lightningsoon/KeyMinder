@@ -54,11 +54,11 @@ const Login: React.FC = () => {
         </Box>
         
         <Title order={2} mb="sm" align="center" color="blue.7">
-          登录到记着
+          登录到“记着”
         </Title>
         
         <Text color="dimmed" size="sm" align="center" mb="lg">
-          您的私人密码管家，一个主密码，记住所有密码
+          “记着”是您的私人密码管家，一个主密码，记住所有密码
         </Text>
         
         {error && (

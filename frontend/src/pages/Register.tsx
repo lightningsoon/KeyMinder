@@ -103,7 +103,7 @@ const Register: React.FC = () => {
         </Box>
         
         <Title order={2} mb="sm" align="center" color="blue.7">
-          注册记着
+          注册“记着”
         </Title>
         
         <Text color="dimmed" size="sm" align="center" mb="lg">
