@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # 暴露端口
-EXPOSE 5173
+EXPOSE 8010
 
 # 启动命令
 CMD ["npm", "run", "dev", "--", "--host"]

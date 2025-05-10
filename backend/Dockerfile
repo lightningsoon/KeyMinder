@@ -16,7 +16,7 @@ COPY . .
 RUN npx prisma generate
 
 # 暴露端口
-EXPOSE 3000
+EXPOSE 8009
 
 # 启动命令
 CMD ["npm", "run", "dev"]

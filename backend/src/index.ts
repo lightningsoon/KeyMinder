@@ -8,12 +8,12 @@ import { authenticateToken } from './middleware/auth';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8009;
 
 // 中间件
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://frontend:8010','http://localhost:8010', 'http://8.147.108.7:8010'],
   credentials: true
 }));
 

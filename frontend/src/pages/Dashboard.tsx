@@ -50,7 +50,8 @@ import {
 // 模拟密码数据
 const dummyPasswords = [
   { id: 1, website: '示例-微信', url: 'https://wx.qq.com', username: 'user123', password: 'P@ssw0rd123', category: '社交媒体', lastUpdated: '2023-12-15' },
-  { id: 2, website: '示例-淘宝', url: 'https://www.alipay.com', username: 'zhangwei@email.com', password: 'Secure!2025', category: '购物', lastUpdated: '2024-01-20' },
+  { id: 2, website: '示例-淘宝', url: 'https://www.alipay.com', username: '188666688888', password: 'Secure!2025', category: '购物', lastUpdated: '2024-01-20' },
+  { id: 2, website: '示例-抖音', url: 'https://www.douyin.com', username: 'xxx1386666666', password: 'mima!2025', category: '娱乐', lastUpdated: '2024-01-20' },
   { id: 3, website: '示例—银行', url: 'https://www.icbc.com.cn', username: '6222********1234', password: 'Bank@2025!', category: '金融', lastUpdated: '2024-02-05' }
 ];
 
@@ -189,7 +190,7 @@ const Dashboard: React.FC = () => {
   // 显示成功消息
   const showSuccessMessage = (message: string) => {
     setSuccessMessage(message);
-    setTimeout(() => setSuccessMessage(null), 3000);
+    setTimeout(() => setSuccessMessage(null), 8009);
   };
 
   // 添加新密码
@@ -423,6 +424,7 @@ const Dashboard: React.FC = () => {
           <Tabs.Tab value="金融" icon={<Key size={14} />}>金融</Tabs.Tab>
           <Tabs.Tab value="购物" icon={<Key size={14} />}>购物</Tabs.Tab>
           <Tabs.Tab value="工作" icon={<Key size={14} />}>工作</Tabs.Tab>
+          <Tabs.Tab value="娱乐" icon={<Key size={14} />}>娱乐</Tabs.Tab>
         </Tabs.List>
       </Tabs>
       
@@ -549,6 +551,7 @@ const Dashboard: React.FC = () => {
               { value: '金融', label: '金融' },
               { value: '购物', label: '购物' },
               { value: '工作', label: '工作' },
+              { value: '娱乐', label: '娱乐' },
               { value: '其他', label: '其他' },
             ]}
             mb="xl"
@@ -613,6 +616,7 @@ const Dashboard: React.FC = () => {
                 { value: '金融', label: '金融' },
                 { value: '购物', label: '购物' },
                 { value: '工作', label: '工作' },
+                { value: '娱乐', label: '娱乐' },
                 { value: '其他', label: '其他' },
               ]}
               mb="xl"
