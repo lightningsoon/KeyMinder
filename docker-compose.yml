@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: password-manager-backend
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - ./data:/data
+      - /app/node_modules
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: password-manager-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

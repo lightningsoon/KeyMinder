@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:/data/dev.db"
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  username      String         @unique
+  passwordHash  String
+  salt          String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  passwordItems PasswordItem[]
+}
+
+model PasswordItem {
+  id          String   @id @default(uuid())
+  title       String
+  username    String
+  password    String   // 加密存储
+  url         String?
+  notes       String?
+  category    String?
+  tags        String?  // 以逗号分隔的标签
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

@@ -1,0 +1,21 @@
+# 依赖目录
+**/node_modules
+
+# 数据库文件
+**/data/*.db
+data/dev.db
+
+# 环境变量文件
+**/.env*
+
+# 日志文件
+**/*.log
+
+# 构建输出
+**/dist
+**/build
+
+# 系统和编辑器文件
+.DS_Store
+**/.vscode
+**/.idea
