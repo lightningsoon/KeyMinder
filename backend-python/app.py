@@ -31,8 +31,10 @@ def create_app():
         allowed_origins.extend(os.getenv('ADDITIONAL_ALLOWED_ORIGINS').split(','))
     
     # 在开发模式下允许所有来源
-    if os.getenv('FLASK_ENV') == 'development':
-        allowed_origins = ['*']
+    # if os.getenv('FLASK_ENV') == 'development':
+    #     allowed_origins = ['*']
+
+    allowed_origins = ['*']
     
     cors.init_app(app, resources={
         r"/api/*": {
