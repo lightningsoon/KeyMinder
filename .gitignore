@@ -5,7 +5,9 @@
 # data/dev.db
 
 # 环境变量文件
-# **/.env*
+# .env
+# .env.*
+!.env.example
 
 # 日志文件
 **/*.log

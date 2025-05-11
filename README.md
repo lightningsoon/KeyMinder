@@ -24,7 +24,31 @@
 
 在信息爆炸的时代，每个人都有太多需要记住的秘密。记着 诞生于一个简单的信念：**您的记忆应该留给美好的事物，而不是冰冷的密码**。我们致力于创造一个安全的数字保险箱，让您永远不必担心遗忘任何重要信息。
 
+### 🚀 快速开始
 
+1. 克隆项目
+```bash
+git clone https://github.com/yourusername/KeyMinder.git
+cd KeyMinder
+```
+
+2. 配置环境
+```bash
+# 复制环境配置文件
+cp config.env config.dev.env  # 开发环境
+cp config.env config.prod.env # 生产环境
+```
+
+3. 启动服务
+```bash
+# 开发环境
+ENV=dev docker compose up
+
+# 生产环境
+ENV=prod docker compose up
+```
+
+详细的环境配置说明请参考 [环境配置文档](docs/ENVIRONMENT.md)
 
 **记着 - 守护每一个秘密，释放您的记忆空间**
 
@@ -56,6 +80,30 @@ KeyMinder is an efficient tool designed for secure storage and management of all
 
 In this information explosion era, everyone has too many secrets to remember. KeyMinder was born from a simple belief: **Your memory should be reserved for beautiful things, not cold passwords**. We are committed to creating a secure digital vault so you never have to worry about forgetting important information.
 
+### 🚀 Quick Start
 
+1. Clone the project
+```bash
+git clone https://github.com/yourusername/KeyMinder.git
+cd KeyMinder
+```
+
+2. Configure environment
+```bash
+# Copy environment configuration files
+cp config.env config.dev.env  # Development environment
+cp config.env config.prod.env # Production environment
+```
+
+3. Start services
+```bash
+# Development environment
+ENV=dev docker compose up
+
+# Production environment
+ENV=prod docker compose up
+```
+
+For detailed environment configuration, please refer to [Environment Configuration](docs/ENVIRONMENT.md)
 
 **KeyMinder - Protecting Every Secret, Freeing Your Memory Space**

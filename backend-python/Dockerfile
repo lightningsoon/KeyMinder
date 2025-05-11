@@ -25,5 +25,5 @@ COPY . .
 # 暴露端口
 EXPOSE 8009
 
-# 启动命令
-CMD ["python", "app.py"] 
+# 使用 Gunicorn 启动应用
+CMD ["gunicorn", "--bind", "0.0.0.0:8009", "--workers", "4", "--timeout", "120", "app:create_app()"] 
