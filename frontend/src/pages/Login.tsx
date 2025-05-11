@@ -24,20 +24,20 @@ const Login: React.FC = () => {
 
   const form = useForm({
     initialValues: {
-      email: '',
+      username: '',
       password: ''
     },
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : '请输入有效的电子邮箱'),
+      username: (value) => (value.length >= 3 ? null : '用户名至少需要3个字符'),
       password: (value) => (value.length >= 6 ? null : '密码至少需要6个字符')
     }
   });
 
-  const handleSubmit = async (values: { email: string; password: string }) => {
+  const handleSubmit = async (values: { username: string; password: string }) => {
     try {
       setLoading(true);
       setError(null);
-      await login(values.email, values.password);
+      await login(values.username, values.password);
       navigate('/dashboard');
     } catch (error: any) {
       setError(error.response?.data?.message || '登录失败，请检查您的凭据');
@@ -54,11 +54,11 @@ const Login: React.FC = () => {
         </Box>
         
         <Title order={2} mb="sm" align="center" color="blue.7">
-          登录到“记着”
+          登录到"记着"
         </Title>
         
         <Text color="dimmed" size="sm" align="center" mb="lg">
-          “记着”是您的私人密码管家，一个主密码，记住所有密码
+          "记着"是您的私人密码管家，一个主密码，记住所有密码
         </Text>
         
         {error && (
@@ -70,9 +70,9 @@ const Login: React.FC = () => {
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <TextInput
             required
-            label="电子邮箱"
-            placeholder="your@email.com"
-            {...form.getInputProps('email')}
+            label="用户名"
+            placeholder="您的用户名"
+            {...form.getInputProps('username')}
           />
           
           <PasswordInput

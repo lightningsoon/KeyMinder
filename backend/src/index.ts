@@ -51,8 +51,14 @@ app.get('/api/test-cors', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/passwords', authenticateToken, passwordRoutes);
 
+// 添加根路由重定向
 app.get('/', (req, res) => {
   res.json({ message: '密码管理器 API 运行正常' });
+});
+
+// 添加健康检查端点
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // 修改监听方式，确保监听所有网络接口

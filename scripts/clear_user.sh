@@ -1,0 +1,1 @@
+docker compose exec backend npx ts-node src/scripts/clearDatabase.ts

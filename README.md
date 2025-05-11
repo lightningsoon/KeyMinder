@@ -1,10 +1,10 @@
-# PassKeeper
+# 记着
 
 ## 永不遗忘的秘密守护者
 
-PassKeeper 是一款专为安全存储和管理您所有密码而设计的高效工具。在这个数字时代，我们每天都面临着无数需要记忆的密码和敏感信息，PassKeeper 让您摆脱记忆负担，确保您的秘密永远安全且触手可及。
+记着 是一款专为安全存储和管理您所有密码而设计的高效工具。在这个数字时代，我们每天都面临着无数需要记忆的密码和敏感信息，记着 让您摆脱记忆负担，确保您的秘密永远安全且触手可及。
 
-### 🔐 为什么选择 PassKeeper?
+### 🔐 为什么选择 记着?
 
 - **安全至上**：采用强大的加密技术，确保您的敏感信息不被窃取
 - **简单易用**：直观的界面设计，让密码管理变得轻松愉快
@@ -22,21 +22,21 @@ PassKeeper 是一款专为安全存储和管理您所有密码而设计的高效
 
 ### 💡 我们的理念
 
-在信息爆炸的时代，每个人都有太多需要记住的秘密。PassKeeper 诞生于一个简单的信念：**您的记忆应该留给美好的事物，而不是冰冷的密码**。我们致力于创造一个安全的数字保险箱，让您永远不必担心遗忘任何重要信息。
+在信息爆炸的时代，每个人都有太多需要记住的秘密。记着 诞生于一个简单的信念：**您的记忆应该留给美好的事物，而不是冰冷的密码**。我们致力于创造一个安全的数字保险箱，让您永远不必担心遗忘任何重要信息。
 
 
 
-**PassKeeper - 守护每一个秘密，释放您的记忆空间**
+**记着 - 守护每一个秘密，释放您的记忆空间**
 
 ---
 
-# PassKeeper
+# KeyMinder
 
 ## The Guardian of Your Secrets
 
-PassKeeper is an efficient tool designed for secure storage and management of all your passwords. In this digital age where we face countless passwords and sensitive information to remember daily, PassKeeper relieves your memory burden and ensures your secrets remain safe and accessible.
+KeyMinder is an efficient tool designed for secure storage and management of all your passwords. In this digital age where we face countless passwords and sensitive information to remember daily, KeyMinder relieves your memory burden and ensures your secrets remain safe and accessible.
 
-### 🔐 Why Choose PassKeeper?
+### 🔐 Why Choose KeyMinder?
 
 - **Security First**: Employs powerful encryption technology to protect your sensitive information
 - **User-Friendly**: Intuitive interface design makes password management easy and pleasant
@@ -54,8 +54,8 @@ PassKeeper is an efficient tool designed for secure storage and management of al
 
 ### 💡 Our Philosophy
 
-In this information explosion era, everyone has too many secrets to remember. PassKeeper was born from a simple belief: **Your memory should be reserved for beautiful things, not cold passwords**. We are committed to creating a secure digital vault so you never have to worry about forgetting important information.
+In this information explosion era, everyone has too many secrets to remember. KeyMinder was born from a simple belief: **Your memory should be reserved for beautiful things, not cold passwords**. We are committed to creating a secure digital vault so you never have to worry about forgetting important information.
 
 
 
-**PassKeeper - Protecting Every Secret, Freeing Your Memory Space**
+**KeyMinder - Protecting Every Secret, Freeing Your Memory Space**

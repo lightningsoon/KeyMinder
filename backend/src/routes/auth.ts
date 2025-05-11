@@ -13,20 +13,13 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 // 注册新用户
 router.post('/register', async (req, res) => {
   try {
-    const { email, username, password } = req.body;
+    console.log('收到注册请求:', { username: req.body.username });
+    const { username, password } = req.body;
 
     // 验证输入
-    if (!email || !username || !password) {
-      return res.status(400).json({ message: '所有字段都是必填的' });
-    }
-
-    // 检查邮箱是否已存在
-    const existingUserByEmail = await prisma.user.findUnique({
-      where: { email }
-    });
-
-    if (existingUserByEmail) {
-      return res.status(400).json({ message: '该邮箱已被注册' });
+    if (!username || !password) {
+      console.log('注册失败: 缺少必要字段');
+      return res.status(400).json({ message: '用户名和密码都是必填的' });
     }
 
     // 检查用户名是否已存在
@@ -35,7 +28,8 @@ router.post('/register', async (req, res) => {
     });
 
     if (existingUserByUsername) {
-      return res.status(400).json({ message: '该用户名已被使用' });
+      console.log('注册失败: 用户名已存在');
+      return res.status(400).json({ message: '该用户名已被使用，请选择其他用户名' });
     }
 
     // 生成盐和密码哈希
@@ -45,16 +39,17 @@ router.post('/register', async (req, res) => {
     // 创建新用户
     const newUser = await prisma.user.create({
       data: {
-        email,
         username,
         passwordHash,
         salt
       }
     });
 
+    console.log('用户创建成功:', { id: newUser.id, username: newUser.username });
+
     // 创建 JWT
     const token = jwt.sign(
-      { id: newUser.id, email: newUser.email, username: newUser.username },
+      { id: newUser.id, username: newUser.username },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -64,12 +59,19 @@ router.post('/register', async (req, res) => {
       token,
       user: {
         id: newUser.id,
-        email: newUser.email,
         username: newUser.username
       }
     });
   } catch (error) {
     console.error('注册错误:', error);
+    // 添加更详细的错误信息
+    if (error instanceof Error) {
+      console.error('错误详情:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+    }
     res.status(500).json({ message: '服务器错误' });
   }
 });
@@ -77,32 +79,32 @@ router.post('/register', async (req, res) => {
 // 用户登录
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     // 验证输入
-    if (!email || !password) {
-      return res.status(400).json({ message: '所有字段都是必填的' });
+    if (!username || !password) {
+      return res.status(400).json({ message: '用户名和密码都是必填的' });
     }
 
     // 查找用户
     const user = await prisma.user.findUnique({
-      where: { email }
+      where: { username }
     });
 
     if (!user) {
-      return res.status(400).json({ message: '无效的凭据' });
+      return res.status(400).json({ message: '用户名或密码不正确' });
     }
 
     // 验证密码
     const isMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!isMatch) {
-      return res.status(400).json({ message: '无效的凭据' });
+      return res.status(400).json({ message: '用户名或密码不正确' });
     }
 
     // 创建 JWT
     const token = jwt.sign(
-      { id: user.id, email: user.email, username: user.username },
+      { id: user.id, username: user.username },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -112,7 +114,6 @@ router.post('/login', async (req, res) => {
       token,
       user: {
         id: user.id,
-        email: user.email,
         username: user.username
       }
     });
@@ -141,7 +142,6 @@ router.get('/me', async (req, res) => {
         where: { id: decoded.id },
         select: {
           id: true,
-          email: true,
           username: true,
           createdAt: true,
           updatedAt: true

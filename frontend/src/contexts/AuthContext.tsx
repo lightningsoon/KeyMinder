@@ -1,26 +1,41 @@
-import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
-import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
+import React, { createContext, useState, useEffect, useContext, useRef, ReactNode } from 'react';
+import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 
+// 定义环境变量类型
+interface ImportMeta {
+  env: {
+    VITE_API_BASE_URL: string;
+  };
+}
+
+// 定义用户类型
 interface User {
   id: string;
-  email: string;
   username: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-interface AuthContextType {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, username: string, password: string) => Promise<void>;
-  logout: () => void;
-}
-
-// 定义API响应类型
+// 定义认证响应类型
 interface AuthResponse {
   token: string;
   user: User;
+}
+
+// 定义上下文类型
+interface AuthContextType {
+  token: string | null;
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (username: string, password: string) => Promise<void>;
+  register: (username: string, password: string) => Promise<void>;
+  logout: () => void;
+}
+
+// 定义 Provider 属性类型
+interface AuthProviderProps {
+  children: ReactNode;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,105 +44,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8009';
 console.log('Using API URL:', API_URL);
 
-// 创建一个独立的 axios 实例，而不是修改全局默认值
+// 创建API实例函数
 const createAuthAPI = (token: string | null): AxiosInstance => {
-  console.log('Creating API instance with token:', token ? '(token exists)' : 'null');
-  
-  // 创建API实例并设置基本配置
-  const api = axios.create({
-    baseURL: API_URL,
-    timeout: 10000, // 增加到10秒超时，处理可能的网络延迟
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    },
-    withCredentials: true, // 确保跨域请求发送凭证
-  });
-  
-  console.log('API instance created with baseURL:', api.defaults.baseURL);
-  
-  // 请求拦截器 - 记录请求详情和添加认证
-  api.interceptors.request.use(
-    config => {
-      // 确保每次请求都使用最新的token（如果可用）
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      
-      console.log('发送请求:', {
-        method: config.method,
-        url: config.url,
-        baseURL: config.baseURL,
-        headers: config.headers,
-        data: config.data ? '(data exists)' : 'none',
-        params: config.params || 'none'
-      });
-      
-      return config;
-    },
-    error => {
-      console.error('请求配置错误:', error.message);
-      return Promise.reject(error);
-    }
-  );
-  
-  // 响应拦截器 - 处理常见错误和记录响应
-  api.interceptors.response.use(
-    (response: AxiosResponse) => {
-      console.log('收到响应:', {
-        status: response.status,
-        url: response.config.url,
-        data: response.data ? '(data exists)' : 'none'
-      });
-      return response;
-    },
-    (error: AxiosError) => {
-      if (error.response) {
-        // 服务器返回了错误状态码
-        console.error('响应错误:', {
-          status: error.response.status,
-          url: error.config?.url,
-          data: error.response.data,
-          headers: error.response.headers
-        });
-        
-        // 处理401未授权错误
-        if (error.response.status === 401) {
-          // 可以在这里处理token过期逻辑
-          console.warn('认证失败或令牌已过期');
-          // 可以触发登出操作
-        }
-      } else if (error.request) {
-        // 请求已发送但没有收到响应
-        console.error('请求错误 (无响应):', {
-          url: error.config?.url,
-          method: error.config?.method,
-          baseURL: error.config?.baseURL,
-          timeout: error.config?.timeout,
-          headers: error.config?.headers
-        });
-        
-        // 网络诊断信息
-        console.error('网络诊断:', {
-          online: navigator.onLine,
-          apiUrl: API_URL,
-          readyState: error.request.readyState,
-          status: error.request.status
-        });
-      } else {
-        // 设置请求时出错
-        console.error('请求设置错误:', error.message);
-      }
-      
-      return Promise.reject(error);
-    }
-  );
-  
-  return api;
+  const config: AxiosRequestConfig = {
+    baseURL: import.meta.env.VITE_API_BASE_URL,
+    headers: token ? { Authorization: `Bearer ${token}` } : {}
+  };
+  return axios.create(config);
 };
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(() => {
     // 从localStorage读取token，并验证格式
@@ -208,9 +134,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [token]);
 
   // 登录函数
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     try {
-      console.log('尝试登录:', { email: email }); // 不记录密码
+      console.log('尝试登录:', { username }); // 不记录密码
       
       if (!apiRef.current) {
         console.log('重新创建API实例用于登录');
@@ -222,7 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error('无法创建API实例');
       }
       
-      const response = await apiRef.current.post<AuthResponse>('/api/auth/login', { email, password });
+      const response = await apiRef.current.post<AuthResponse>('/api/auth/login', { username, password });
       console.log('登录响应状态:', response.status);
       
       const { token: newToken, user: userData } = response.data;
@@ -237,23 +163,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setToken(newToken);
       setUser(userData);
       
-      console.log('登录成功，用户:', userData.username || userData.email);
+      console.log('登录成功，用户:', userData.username);
     } catch (error) {
       // 详细的错误处理
       if (axios.isAxiosError(error)) {
-        if (error.response) {
+        const axiosError = error as AxiosError;
+        if (axiosError.response) {
           // 服务器返回了错误状态码
-          const status = error.response.status;
-          const errorData = error.response.data;
+          const status = axiosError.response.status;
+          const errorData = axiosError.response.data as { message?: string };
           
           console.error('登录失败 - 服务器响应:', {
             status: status,
             data: errorData,
-            url: error.config?.url
+            url: axiosError.config?.url
           });
           
           if (status === 401) {
-            throw new Error('邮箱或密码不正确');
+            throw new Error('用户名或密码不正确');
           } else if (status === 429) {
             throw new Error('登录尝试次数过多，请稍后再试');
           } else if (errorData && errorData.message) {
@@ -261,23 +188,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           } else {
             throw new Error(`服务器错误 (${status})`);
           }
-        } else if (error.request) {
+        } else if (axiosError.request) {
           // 请求已发送但没有收到响应
           console.error('登录失败 - 无响应:', {
-            request: error.request,
-            config: error.config
+            request: axiosError.request,
+            config: axiosError.config
           });
           
           // 检查网络连接和API URL
           console.log('网络状态:', navigator.onLine ? '在线' : '离线');
           console.log('API URL:', API_URL);
-          console.log('完整请求URL:', error.config?.baseURL + error.config?.url);
+          console.log('完整请求URL:', axiosError.config?.baseURL + axiosError.config?.url);
           
           throw new Error('无法连接到服务器，请检查您的网络连接');
         } else {
           // 设置请求时发生错误
-          console.error('登录失败 - 请求错误:', error.message);
-          throw new Error('请求错误: ' + error.message);
+          console.error('登录失败 - 请求错误:', axiosError.message);
+          throw new Error('请求错误: ' + axiosError.message);
         }
       } else {
         // 非Axios错误
@@ -288,9 +215,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // 注册函数
-  const register = async (email: string, username: string, password: string) => {
+  const register = async (username: string, password: string) => {
     try {
-      console.log('尝试注册:', { email, username }); // 不记录密码
+      console.log('尝试注册:', { username }); // 不记录密码
       
       if (!apiRef.current) {
         console.log('重新创建API实例用于注册');
@@ -304,7 +231,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       const response = await apiRef.current.post<AuthResponse>(
         '/api/auth/register', 
-        { email, username, password }
+        { username, password }
       );
       
       console.log('注册响应状态:', response.status);
@@ -334,7 +261,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
           
           if (status === 409) {
-            throw new Error('该邮箱或用户名已被注册');
+            throw new Error('该用户名已被注册');
           } else if (status === 400) {
             throw new Error(errorData.message || '注册信息无效');
           } else if (errorData && errorData.message) {
