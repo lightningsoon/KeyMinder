@@ -8,13 +8,13 @@ const prisma = new PrismaClient();
 // 注册验证规则
 export const registerValidation = [
   body('email').isEmail().withMessage('请提供有效的电子邮件地址'),
-  body('password').isLength({ min: 8 }).withMessage('密码长度至少为8个字符')
+  body('password').isLength({ min: 8 }).withMessage('密码长度至少为8个字符'),
 ];
 
 // 登录验证规则
 export const loginValidation = [
   body('email').isEmail().withMessage('请提供有效的电子邮件地址'),
-  body('password').notEmpty().withMessage('请提供密码')
+  body('password').notEmpty().withMessage('请提供密码'),
 ];
 
 // 注册新用户
@@ -42,8 +42,8 @@ export const register = async (req: Request, res: Response) => {
       data: {
         email,
         hashedPassword,
-        salt
-      }
+        salt,
+      },
     });
 
     // 生成JWT令牌
@@ -54,9 +54,9 @@ export const register = async (req: Request, res: Response) => {
       message: '注册成功',
       user: {
         id: user.id,
-        email: user.email
+        email: user.email,
       },
-      token
+      token,
     });
   } catch (error) {
     console.error('注册错误:', error);
@@ -95,9 +95,9 @@ export const login = async (req: Request, res: Response) => {
       message: '登录成功',
       user: {
         id: user.id,
-        email: user.email
+        email: user.email,
       },
-      token
+      token,
     });
   } catch (error) {
     console.error('登录错误:', error);
@@ -109,19 +109,19 @@ export const login = async (req: Request, res: Response) => {
 export const getCurrentUser = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
-    
+
     if (!userId) {
       return res.status(401).json({ message: '未授权' });
     }
 
-    const user = await prisma.user.findUnique({ 
+    const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
         id: true,
         email: true,
         createdAt: true,
-        updatedAt: true
-      }
+        updatedAt: true,
+      },
     });
 
     if (!user) {

@@ -2,11 +2,10 @@
 **/node_modules
 
 # 数据库文件
-**/data/*.db
-data/dev.db
+# data/dev.db
 
 # 环境变量文件
-**/.env*
+# **/.env*
 
 # 日志文件
 **/*.log

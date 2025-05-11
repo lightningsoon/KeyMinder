@@ -1,13 +1,14 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
 const prisma = new PrismaClient();
-prisma.$connect()
+prisma
+  .$connect()
   .then(() => console.log('成功连接到数据库'))
-  .catch(e => console.error('数据库连接失败:', e));
+  .catch((error: Error) => console.error('数据库连接失败:', error));
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 // 注册新用户
@@ -24,7 +25,7 @@ router.post('/register', async (req, res) => {
 
     // 检查用户名是否已存在
     const existingUserByUsername = await prisma.user.findUnique({
-      where: { username }
+      where: { username },
     });
 
     if (existingUserByUsername) {
@@ -41,26 +42,24 @@ router.post('/register', async (req, res) => {
       data: {
         username,
         passwordHash,
-        salt
-      }
+        salt,
+      },
     });
 
     console.log('用户创建成功:', { id: newUser.id, username: newUser.username });
 
     // 创建 JWT
-    const token = jwt.sign(
-      { id: newUser.id, username: newUser.username },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    const token = jwt.sign({ id: newUser.id, username: newUser.username }, JWT_SECRET, {
+      expiresIn: '24h',
+    });
 
     res.status(201).json({
       message: '用户注册成功',
       token,
       user: {
         id: newUser.id,
-        username: newUser.username
-      }
+        username: newUser.username,
+      },
     });
   } catch (error) {
     console.error('注册错误:', error);
@@ -69,7 +68,7 @@ router.post('/register', async (req, res) => {
       console.error('错误详情:', {
         message: error.message,
         stack: error.stack,
-        name: error.name
+        name: error.name,
       });
     }
     res.status(500).json({ message: '服务器错误' });
@@ -88,7 +87,7 @@ router.post('/login', async (req, res) => {
 
     // 查找用户
     const user = await prisma.user.findUnique({
-      where: { username }
+      where: { username },
     });
 
     if (!user) {
@@ -103,19 +102,17 @@ router.post('/login', async (req, res) => {
     }
 
     // 创建 JWT
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {
+      expiresIn: '24h',
+    });
 
     res.json({
       message: '登录成功',
       token,
       user: {
         id: user.id,
-        username: user.username
-      }
+        username: user.username,
+      },
     });
   } catch (error) {
     console.error('登录错误:', error);
@@ -133,19 +130,20 @@ router.get('/me', async (req, res) => {
       return res.status(401).json({ message: '未提供认证令牌' });
     }
 
-    jwt.verify(token, JWT_SECRET, async (err, decoded: any) => {
+    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
       if (err) {
         return res.status(403).json({ message: '令牌无效或已过期' });
       }
 
+      const payload = decoded as JwtPayload & { id: string; username: string };
       const user = await prisma.user.findUnique({
-        where: { id: decoded.id },
+        where: { id: payload.id },
         select: {
           id: true,
           username: true,
           createdAt: true,
-          updatedAt: true
-        }
+          updatedAt: true,
+        },
       });
 
       if (!user) {
@@ -153,7 +151,7 @@ router.get('/me', async (req, res) => {
       }
 
       res.json({
-        user
+        user,
       });
     });
   } catch (error) {

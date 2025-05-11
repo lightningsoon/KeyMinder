@@ -15,19 +15,19 @@ export class EncryptionService {
     try {
       // 生成随机的初始化向量
       const iv = CryptoJS.lib.WordArray.random(128 / 8);
-      
+
       // 使用 PBKDF2 从密码生成密钥
       const salt = CryptoJS.lib.WordArray.random(128 / 8);
       const derivedKey = CryptoJS.PBKDF2(key, salt, {
         keySize: 256 / 32,
-        iterations: 10000
+        iterations: 10000,
       });
 
       // 使用 AES-CBC 模式加密
       const encrypted = CryptoJS.AES.encrypt(text, derivedKey, {
         iv: iv,
         mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
+        padding: CryptoJS.pad.Pkcs7,
       });
 
       // 将 salt、iv 和加密数据组合成一个字符串
@@ -42,18 +42,18 @@ export class EncryptionService {
     try {
       // 分解加密字符串
       const [salt, iv, encrypted] = ciphertext.split(':');
-      
+
       // 重新生成密钥
       const derivedKey = CryptoJS.PBKDF2(key, salt, {
         keySize: 256 / 32,
-        iterations: 10000
+        iterations: 10000,
       });
 
       // 解密
       const decrypted = CryptoJS.AES.decrypt(encrypted, derivedKey, {
         iv: CryptoJS.enc.Hex.parse(iv),
         mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
+        padding: CryptoJS.pad.Pkcs7,
       });
 
       return decrypted.toString(CryptoJS.enc.Utf8);
@@ -65,10 +65,14 @@ export class EncryptionService {
   // 用于密码哈希的方法保持不变
   static async hashPassword(password: string): Promise<string> {
     const salt = CryptoJS.lib.WordArray.random(128 / 8).toString();
-    return CryptoJS.PBKDF2(password, salt, {
-      keySize: 256 / 32,
-      iterations: 10000
-    }).toString() + ':' + salt;
+    return (
+      CryptoJS.PBKDF2(password, salt, {
+        keySize: 256 / 32,
+        iterations: 10000,
+      }).toString() +
+      ':' +
+      salt
+    );
   }
 
   // 主密钥加密方法
@@ -97,7 +101,7 @@ export class EncryptionService {
       const [hash, salt] = hashedPassword.split(':');
       const testHash = CryptoJS.PBKDF2(password, salt, {
         keySize: 256 / 32,
-        iterations: 10000
+        iterations: 10000,
       }).toString();
       return hash === testHash;
     } catch (error) {

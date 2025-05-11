@@ -2,15 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 // 扩展 Request 接口以包含用户信息
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: string;
-        email: string;
-        username: string;
-      };
-    }
+declare module 'express' {
+  interface Request {
+    user?: {
+      id: string;
+      email: string;
+      username: string;
+    };
   }
 }
 
@@ -28,7 +26,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     if (err) {
       return res.status(403).json({ message: '令牌无效或已过期' });
     }
-    
+
     req.user = user as { id: string; email: string; username: string };
     next();
   });

@@ -2,17 +2,18 @@ name: passkeeper
 services:
   backend:
     build:
-      context: ./backend
+      context: ./backend-python
       dockerfile: Dockerfile
     container_name: password-manager-backend
     environment:
-      - NODE_ENV=development
+      - FLASK_ENV=development
+      - DATABASE_URL=sqlite:///data/dev.db
+      - JWT_SECRET=your-secret-key-change-this-in-production
     ports:
       - "8009:8009"
     volumes:
-      - ./backend:/app
+      - ./backend-python:/app
       - ./data:/data
-      - /app/node_modules
     networks:
       - app-network
 
@@ -21,6 +22,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: password-manager-frontend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8009
     ports:
       - "8010:8010"
     volumes:
@@ -30,8 +33,6 @@ services:
       - backend
     networks:
       - app-network
-    environment:
-      - VITE_API_BASE_URL=http://localhost:8009
 
 networks:
   app-network:

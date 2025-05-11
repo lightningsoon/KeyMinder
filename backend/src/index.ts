@@ -12,16 +12,17 @@ const PORT = 8009;
 
 // 更详细的 CORS 配置
 const corsOptions = {
-  origin: function(origin, callback) {
+  origin: function (origin, callback) {
     const allowedOrigins = [
       'http://frontend:8010',
-      'http://localhost:8010', 
-      'http://8.130.86.246:8010'
+      'http://localhost:8010',
+      'http://0.0.0.0:8010',
+      'http://47.121.24.132:8010',
     ];
-    
+
     // 记录请求来源，便于调试
     console.log(`收到请求，源: ${origin || '未知'}`);
-    
+
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -35,7 +36,7 @@ const corsOptions = {
   credentials: true,
   preflightContinue: false,
   optionsSuccessStatus: 204,
-  maxAge: 86400
+  maxAge: 86400,
 };
 
 // 应用 CORS 中间件
@@ -70,11 +71,13 @@ app.listen(PORT, '0.0.0.0', () => {
       console.log('- 无源请求 (如移动应用)');
     }
   });
-  ['http://frontend:8010', 'http://localhost:8010', 'http://8.130.86.246:8010'].forEach(origin => {
-    corsOptions.origin(origin, (err, allowed) => {
-      if (allowed) {
-        console.log(`- ${origin}`);
-      }
-    });
-  });
+  ['http://frontend:8010', 'http://localhost:8010', 'http://0.0.0.0:8010', 'http://47.121.24.132:8010'].forEach(
+    (origin) => {
+      corsOptions.origin(origin, (err, allowed) => {
+        if (allowed) {
+          console.log(`- ${origin}`);
+        }
+      });
+    }
+  );
 });
