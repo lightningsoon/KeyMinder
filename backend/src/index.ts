@@ -16,8 +16,6 @@ const corsOptions = {
     const allowedOrigins = [
       'http://frontend:8010',
       'http://localhost:8010', 
-      'http://127.0.0.1:8010',
-      'http://0.0.0.0:8010',
       'http://8.130.86.246:8010'
     ];
     
