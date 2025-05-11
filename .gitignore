@@ -1,59 +1,60 @@
 # 依赖目录
-**/node_modules
-**/__pycache__
-**/*.pyc
-**/*.pyo
-**/*.pyd
-**/.Python
-**/env/
-**/venv/
-**/.env/
-**/.venv/
+node_modules/
+__pycache__/
+env/
+venv/
+.venv/
+
+# Python 缓存
+*.pyc
+*.pyo
+*.pyd
 
 # 数据库文件
-data/dev.db
 data/*.db
-data/*.sqlite
+data/*.sqlite*
 data/*.sqlite3
 
 # 环境变量文件
-# .env
-# .env.*
+.env
+.env.*
 !.env.example
+config.*.env
+!config.example.env
 
 # 日志文件
-**/*.log
-**/logs/
-**/log/
+*.log
+logs/
+log/
 
 # 构建输出
-**/dist
-**/build
-**/.next
-**/out
-**/.nuxt
-**/.output
+dist/
+build/
+.next/
+out/
+.nuxt/
+.output/
 
 # 系统和编辑器文件
 .DS_Store
-**/.vscode
-**/.idea
-**/*.swp
-**/*.swo
-**/.project
-**/.classpath
-**/.settings/
-**/*.sublime-workspace
-**/*.sublime-project
+.vscode/
+.idea/
+*.swp
+*.swo
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
 
 # Docker 相关
 .docker/
 docker-compose.override.yml
 
 # 临时文件
-**/tmp/
-**/temp/
-**/.tmp/
-**/.temp/
-**/*.tmp
-**/*.temp
+tmp/
+temp/
+.tmp/
+.temp/
+*.tmp
+*.temp
