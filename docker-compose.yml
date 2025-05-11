@@ -2,7 +2,7 @@ name: passkeeper
 services:
   backend:
     build:
-      context: ./backend-python
+      context: ./backend
       dockerfile: Dockerfile
     container_name: password-manager-backend
     env_file:
@@ -14,7 +14,7 @@ services:
     ports:
       - "${BACKEND_PORT:-8009}:8009"
     volumes:
-      - ./backend-python:/app
+      - ./backend:/app
       - ./data:/data
     networks:
       - app-network
